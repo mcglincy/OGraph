@@ -1,7 +1,7 @@
-OGraph, an objective-c graph library.
+OGraph, an objective-c graph library for iOS.
 
-Basically an obj-c port of Mat Buckland's C++ graph classes, as
-described in his book "Programming Game AI by Example".
+This is basically an obj-c port of Mat Buckland's C++ graph classes, as
+described in his excellent book "Programming Game AI by Example.".
 
-More info on his book and sample C++ files are available at:
+More info on Mat Buckland's book and sample C++ files are available at: 
 http://www.wordware.com/ai
