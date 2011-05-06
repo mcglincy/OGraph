@@ -12,16 +12,29 @@
 
 @implementation HeuristicEuclid
 
-- (double)calculateWithGraph:(SparseGraph *)graph node1Index:(NSUInteger)node1Index node2Index:(NSUInteger)node2Index {
-    // TODO: this is a crappy and potentially dangerous downcast.
-    // TODO: come up with a better way to handle this.
-    // The original code is C++ and uses templates.
-    NavGraphNode *node1 = (NavGraphNode *)[graph getNodeWithIndex:node1Index];
-    NavGraphNode *node2 = (NavGraphNode *)[graph getNodeWithIndex:node2Index];
+- (double)calculateWithNodeA:(GraphNode *)a b:(GraphNode *)b {
+    // TODO: the original C++ Heuristic hierarchy takes advantage
+    // of templates for the SparseGraph's node type, to allow proper
+    // type safety.
+    // We don't have templates, do just dynamically check the type
+    // of the nodes we're given.
     
-    // use the pythagorean theorem
-    CGFloat deltaX = node2.position.x - node1.position.x;
-    CGFloat deltaY = node2.position.y - node1.position.y;
+    // TODO: commenting this out until we decide how much
+    // safety-checking we want, if any.
+//    if (![a isKindOfClass:[NavGraphNode class]] || 
+//        ![b isKindOfClass:[NavGraphNode class]]) {
+//        // not NavGraphNodes, so just return 0.
+//        // This effectively makes A* into Dijkstra's.
+//        return 0.0;
+//    }
+        
+    // now that we know we have NavGraphNodes, downcast.
+    NavGraphNode *ngnA = (NavGraphNode *)a;
+    NavGraphNode *ngnB = (NavGraphNode *)b;
+    
+    // use the pythagorean theorem to calculate distance
+    CGFloat deltaX = ngnB.position.x - ngnA.position.x;
+    CGFloat deltaY = ngnB.position.y - ngnB.position.y;
     double dist = sqrt((deltaX * deltaX) + (deltaY * deltaY));
     return dist;
 }

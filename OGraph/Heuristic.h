@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SparseGraph.h"
+#import "GraphNode.h"
 
 @protocol Heuristic <NSObject>
-- (double)calculateWithGraph:(SparseGraph *)graph node1Index:(NSUInteger)node1Index node2Index:(NSUInteger)node2Index;
+- (double)calculateWithNodeA:(GraphNode *)a b:(GraphNode *)b;
 @end

@@ -90,9 +90,9 @@ static NSNumber *kZero;
         NSArray *edges = [graph getEdgesForNodeWithIndex:nextClosestNodeIndex];
         for (GraphEdge *edge in edges) {
             // calculate the heuristic cost from this node to the target (H)
-            double hCost = [heuristic calculateWithGraph:graph 
-                                              node1Index:targetNodeIndex 
-                                              node2Index:edge.to];
+            GraphNode *nodeA = [graph getNodeWithIndex:targetNodeIndex];
+            GraphNode *nodeB = [graph getNodeWithIndex:edge.to];
+            double hCost = [heuristic calculateWithNodeA:nodeA b:nodeB];
             
             // calculate the "real" cost to this node from the source (G)
             double currentCost = [[gCosts objectAtIndex:nextClosestNodeIndex] doubleValue];
