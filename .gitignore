@@ -1,0 +1,15 @@
+# osx noise
+.DS_Store
+profile
+
+# xcode noise
+*~.nib
+*.mode1v3
+*.mode2v3
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.swp
+build/
+project.xcworkspace/
+xcuserdata/

@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'OGraphTests' target in the 'OGraphTests' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+#endif
