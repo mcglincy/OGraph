@@ -31,4 +31,22 @@
     return self;
 }
 
+# pragma mark NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        from = (NSUInteger)[coder decodeIntegerForKey:@"GEFrom"];
+        to = (NSUInteger)[coder decodeIntegerForKey:@"GETo"];
+        cost = [coder decodeDoubleForKey:@"GECost"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeInteger:(NSInteger)from forKey:@"GEFrom"];
+    [coder encodeInteger:(NSInteger)to forKey:@"GETo"];
+    [coder encodeDouble:cost forKey:@"GECost"];
+}
+
 @end

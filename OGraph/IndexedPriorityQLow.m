@@ -12,32 +12,30 @@
 - (void)swap:(NSUInteger)a with:(NSUInteger)b;
 - (void)reorderUpwards:(NSUInteger)nd;
 - (void)reorderDownwards:(NSUInteger)nd heapSize:(NSUInteger)heapSize;
-- (NSUInteger)keyWithHeapIndex:(NSUInteger)heapIndex;
+- (double)keyWithHeapIndex:(NSUInteger)heapIndex;
 @end
 
 @implementation IndexedPriorityQLow
 
-@synthesize keys, size;
+@synthesize size;
 
-- (id)initWithKeys:(NSArray *)aKeys maxSize:(NSUInteger)aMaxSize {
+- (id)initWithKeys:(double *)aKeys maxSize:(NSUInteger)aMaxSize {
     self = [super init];
     if (self) {
-        self.keys = aKeys;
+        keys = aKeys;
         maxSize = aMaxSize;
         size = 0;
         int capacity = maxSize + 1;
-        heap = [[NSMutableArray alloc] initWithCapacity:capacity];
-        invHeap = [[NSMutableArray alloc] initWithCapacity:capacity];
-        NSNumber *zero = [NSNumber numberWithInt:0];
-        for (int i = 0; i < capacity; i++) {
-            [heap addObject:zero];
-            [invHeap addObject:zero];
-        }
+        // we use calloc to zero out the array
+        heap = (NSUInteger *)calloc(capacity, sizeof(NSUInteger));
+        invHeap = (NSUInteger *)calloc(capacity, sizeof(NSUInteger));
     }
     return self;
 }
 
 - (void)dealloc {
+    free(heap);
+    free(invHeap);
     [super dealloc];
 }
 
@@ -50,40 +48,38 @@
 - (void)insert:(NSUInteger)idx {
     NSAssert(size + 1 <= maxSize, @"IndexedPriorityQLow insert: illegal size");
     ++size;
-    [heap replaceObjectAtIndex:size withObject:[NSNumber numberWithUnsignedInteger:idx]];
-    [invHeap replaceObjectAtIndex:idx withObject:[NSNumber numberWithUnsignedInteger:size]];
+    heap[size] = idx;
+    invHeap[idx] = size;
     [self reorderUpwards:size];
 }
 
 - (NSUInteger)pop {
     [self swap:1 with:size];
     [self reorderDownwards:1 heapSize:(size - 1)];
-    NSNumber *num = [heap objectAtIndex:size];
+    NSUInteger num = heap[size];
     size--;
-    return [num unsignedIntegerValue];
+    return num;
 }
 
 - (void)changePriority:(NSUInteger)idx {
-    [self reorderUpwards:[[invHeap objectAtIndex:idx] unsignedIntegerValue]];
+    [self reorderUpwards:invHeap[idx]];
 }
 
 - (void)swap:(NSUInteger)a with:(NSUInteger)b {
     // TODO: use NSMutableArray exchangeObjectAtIndex ?
-    NSNumber *tempA = [heap objectAtIndex:a];
-    NSNumber *tempB = [heap objectAtIndex:b];
-    [heap replaceObjectAtIndex:a withObject:tempB];
-    [heap replaceObjectAtIndex:b withObject:tempA];
+    NSUInteger tempA = heap[a];
+    NSUInteger tempB = heap[b];
+    heap[a] = tempB;
+    heap[b] = tempA;
     // change the handles too
-    [invHeap replaceObjectAtIndex:[tempA unsignedIntegerValue] withObject:[NSNumber numberWithUnsignedInteger:a]];
-    [invHeap replaceObjectAtIndex:[tempB unsignedIntegerValue] withObject:[NSNumber numberWithUnsignedInteger:b]];    
+    invHeap[tempA] = a;
+    invHeap[tempB] = b;
 }
 
 // Convenience method to get the key at the position given by the given heap index.
 // i.e., returns keys[heap[idx]]
-- (NSUInteger)keyWithHeapIndex:(NSUInteger)heapIndex {
-    // handle all the NSArray / NSNumber crud under the hood.
-    NSUInteger keyIdx = [[heap objectAtIndex:heapIndex] unsignedIntegerValue];
-    return [[keys objectAtIndex:keyIdx] unsignedIntegerValue];
+- (double)keyWithHeapIndex:(NSUInteger)heapIndex {
+    return keys[heap[heapIndex]];
 }
 
 - (void)reorderUpwards:(NSUInteger)nd {

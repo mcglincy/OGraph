@@ -14,17 +14,16 @@
 //
 //  The priority in this implementation is the lowest valued key
 @interface IndexedPriorityQLow : NSObject {
-    NSArray *keys;
-    NSMutableArray *heap;
-    NSMutableArray *invHeap;
+    double *keys;
+    NSUInteger *heap;
+    NSUInteger *invHeap;
     NSUInteger size;
     NSUInteger maxSize;
 }
 
-@property (nonatomic, retain) NSArray *keys;
 @property (nonatomic, readonly) NSUInteger size;
 
-- (id)initWithKeys:(NSArray *)aKeys maxSize:(NSUInteger)aMaxSize;
+- (id)initWithKeys:(double *)aKeys maxSize:(NSUInteger)aMaxSize;
 - (BOOL)empty;
 - (void)insert:(NSUInteger)idx;
 - (NSUInteger)pop;

@@ -17,13 +17,13 @@
 
     // indexed into by node index.
     // Contains the "real" cumulative cost to that node.
-    NSMutableArray *gCosts;
+    double *gCosts;
     
     // indexed into by node index.
     // Contains the cost from adding gCosts[n] to the heuristic
     // cost from n to the target node.  This is the array the
     // iPQ indexes into.
-    NSMutableArray *fCosts;
+    double *fCosts;
     
     // this array contains the edges that comprise the shortest path 
     // tree - a directed subtree of the graph that encapsulates the 

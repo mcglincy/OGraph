@@ -12,7 +12,7 @@
 #import "IndexedPriorityQLow.h"
 #import "SparseGraph.h"
 
-static NSNumber *kZero;
+static NSNull *kNull;
 
 @interface GraphSearchDijkstra() 
 - (void)search;
@@ -25,7 +25,7 @@ static NSNumber *kZero;
 + (void)initialize {
     static bool initialized = FALSE;
     if (!initialized) {
-        kZero = [[NSNumber alloc] initWithUnsignedInteger:0U];
+        kNull = [NSNull null];
     }
 }
 
@@ -40,11 +40,10 @@ static NSNumber *kZero;
         // TODO: use arrays?
         shortestPathTree = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
         searchFrontier = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
-        costToThisNode = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
+        costToThisNode = (double *)calloc(graph.numNodes, sizeof(double));
         for (int i = 0; i < graph.numNodes; i++) {
-            [shortestPathTree addObject:kZero];
-            [searchFrontier addObject:kZero];
-            [costToThisNode addObject:kZero];
+            [shortestPathTree addObject:kNull];
+            [searchFrontier addObject:kNull];
         }
         // do the search
         [self search];
@@ -53,6 +52,10 @@ static NSNumber *kZero;
 }
 
 - (void)dealloc {
+    [shortestPathTree release];
+    [searchFrontier release];
+    
+    free(costToThisNode);
     [super dealloc];
 }
 
@@ -91,7 +94,7 @@ static NSNumber *kZero;
         for (GraphEdge *edge in edges) {
             // the total cost to the node this edge points to is the cost
             // to the current node plus the cost of the edge connecting them
-            double currentCost = [[costToThisNode objectAtIndex:nextClosestNodeIndex] doubleValue];
+            double currentCost = costToThisNode[nextClosestNodeIndex];
             double newCost = currentCost + edge.cost;
             
             // if this edge has never been on the frontier, make a note of the cost
@@ -99,8 +102,8 @@ static NSNumber *kZero;
             // and the destination node to the PQ
             // TODO: the pq in the book uses an initialized vector of Edge pointers, 
             // and then checks them for == 0.
-            if ([searchFrontier objectAtIndex:edge.to] == kZero) {
-                [costToThisNode replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:newCost]];
+            if ([searchFrontier objectAtIndex:edge.to] == kNull) {
+                costToThisNode[edge.to] = newCost;
                 [pq insert:edge.to];
                 [searchFrontier replaceObjectAtIndex:edge.to withObject:edge];
             } 
@@ -109,9 +112,9 @@ static NSNumber *kZero;
             // If this path is cheaper, we assign the new cost to the destination
             // node, update its entry in PQ to reflect the change, and add the
             // edge to the frontier.            
-            else if (newCost < [[costToThisNode objectAtIndex:edge.to] doubleValue] &&
-                     [shortestPathTree objectAtIndex:edge.to] == kZero) {
-                [costToThisNode replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:newCost]];
+            else if (newCost < costToThisNode[edge.to] &&
+                     [shortestPathTree objectAtIndex:edge.to] == kNull) {
+                costToThisNode[edge.to] = newCost;
                 
                 // because the cost is less than it was previously, the PQ must
                 // be resorted to account for this.
@@ -139,7 +142,7 @@ static NSNumber *kZero;
     [path insertObject:[NSNumber numberWithUnsignedInt:nd] atIndex:0];
     
     while (nd != sourceNodeIndex && 
-           [shortestPathTree objectAtIndex:nd] != kZero) {
+           [shortestPathTree objectAtIndex:nd] != kNull) {
         GraphEdge *edge = [shortestPathTree objectAtIndex:nd];
         nd = edge.from;
         [path insertObject:[NSNumber numberWithUnsignedInt:nd] atIndex:0];
@@ -149,7 +152,7 @@ static NSNumber *kZero;
 }
 
 - (double)getCostToNodeIndex:(NSUInteger)idx {
-    return [[costToThisNode objectAtIndex:idx] doubleValue];    
+    return costToThisNode[idx];    
 }
 
 - (double)getCostToTarget {

@@ -14,16 +14,19 @@
 #import "GraphSearchDijkstra.h"
 #import "Heuristic.h"
 #import "HeuristicEuclid.h"
+#import "HeuristicManhattan.h"
 #import "NavGraphNode.h"
 #import "SparseGraph.h"
 #import "OGraphTests.h"
 
 @interface OGraphTests()
 + (SparseGraph *)minimalDigraph;
++ (SparseGraph *)minimalNavGraph;
 + (SparseGraph *)sampleUndirectedGraph;
 + (SparseGraph *)twoRouteCostedDigraph;
 + (SparseGraph *)complicatedCostedDigraph;
 + (SparseGraph *)threeByThreeNavGraph;
+- (void)aStarWithHeuristic:(id<Heuristic>)heuristic;
 @end
 
 @implementation OGraphTests
@@ -42,6 +45,18 @@
     [graph addNodeWithIndex:0];
     [graph addNodeWithIndex:1];
     [graph addEdgeFrom:0 to:1];
+    return [graph autorelease];
+}
+
++ (SparseGraph *)minimalNavGraph {
+    SparseGraph *graph = [[SparseGraph alloc] initWithIsDigraph:NO];
+    NavGraphNode *node1 = [[NavGraphNode alloc] initWithIndex:0 x:0 y:0];
+    NavGraphNode *node2 = [[NavGraphNode alloc] initWithIndex:1 x:200.0 y:200.0];
+    [graph addNode:node1];
+    [graph addNode:node2];
+    [graph addEdgeFrom:0 to:1];
+    [node1 release];
+    [node2 release];
     return [graph autorelease];
 }
 
@@ -260,9 +275,9 @@
     return [graph autorelease];
 }
 
-- (void)testAStar {
+// Convenience method to test AStar with a given    heuristic
+- (void)aStarWithHeuristic:(id<Heuristic>)heuristic {
     SparseGraph *graph = [OGraphTests threeByThreeNavGraph];
-    HeuristicEuclid *heuristic = [[HeuristicEuclid alloc] init];
     // find a path from our bottom center node (7) to our top center (1)
     GraphSearchAStar *aStar = [[GraphSearchAStar alloc] initWithGraph:graph 
                                                       sourceNodeIndex:7 
@@ -289,9 +304,95 @@
     STAssertEqualObjects([path objectAtIndex:1], [NSNumber numberWithInt:4], nil);
     STAssertEqualObjects([path objectAtIndex:2], [NSNumber numberWithInt:2], nil);
     
-    [heuristic release];
-    [aStar release];
+    [aStar release];    
 }
 
+- (void)testAStarWithEuclid {
+    HeuristicEuclid *heuristic = [[HeuristicEuclid alloc] init];
+    [self aStarWithHeuristic:heuristic];
+    [heuristic release];
+}
+
+- (void)testAStarWithManhattan {
+    HeuristicManhattan *heuristic = [[HeuristicManhattan alloc] init];
+    [self aStarWithHeuristic:heuristic];
+    [heuristic release];
+}
+
+- (void)testArchiveAndNewFromFile {
+    // our test target uses a different bundle than [NSBundle mainBundle]
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *archivePath = [[bundle bundlePath] stringByAppendingPathComponent:@"sgArchive.data"];
+
+    // archive a test graph to a file
+    SparseGraph *archive = [OGraphTests minimalDigraph];
+    [archive archiveToFile:archivePath];
+    
+    // then load it
+    SparseGraph *graph = [SparseGraph newFromFile:archivePath];
+    
+    // make sure it's the graph we expect
+    STAssertNotNil(graph, nil);    
+    STAssertEquals(graph.numNodes, 2U, nil);
+    STAssertEquals(graph.numActiveNodes, 2U, nil);
+    STAssertEquals(graph.numEdges, 1U, nil);
+    STAssertTrue([graph isNodePresentWithIndex:0], nil);
+    STAssertTrue([graph isNodePresentWithIndex:1], nil);
+    STAssertFalse([graph isNodePresentWithIndex:2], nil);
+    STAssertTrue([graph isEdgePresentWithFrom:0 to:1], nil);    
+    STAssertFalse([graph isEdgePresentWithFrom:1 to:0], nil);    
+    
+    [graph release];
+ 
+    // remove test file
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:archivePath error:NULL];
+}
+
+- (void)testArchiveAndNewFromFileWithNavGraphNode {
+    // our test target uses a different bundle than [NSBundle mainBundle]
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *archivePath = [[bundle bundlePath] stringByAppendingPathComponent:@"sgArchive.data"];
+    
+    // archive a test graph to a file
+    SparseGraph *archive = [OGraphTests minimalNavGraph];
+    [archive archiveToFile:archivePath];
+    
+    // then load it
+    SparseGraph *graph = [SparseGraph newFromFile:archivePath];
+    
+    // make sure it's the graph we expect
+    STAssertNotNil(graph, nil);    
+    STAssertEquals(graph.numNodes, 2U, nil);
+    STAssertEquals(graph.numActiveNodes, 2U, nil);
+    // undirected graph, so edges to and from
+    STAssertEquals(graph.numEdges, 2U, nil);
+    STAssertTrue([graph isNodePresentWithIndex:0], nil);
+    STAssertTrue([graph isNodePresentWithIndex:1], nil);
+    STAssertFalse([graph isNodePresentWithIndex:2], nil);
+    STAssertTrue([graph isEdgePresentWithFrom:0 to:1], nil);    
+    STAssertTrue([graph isEdgePresentWithFrom:1 to:0], nil);    
+    
+    [graph release];
+
+    // remove test file
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:archivePath error:NULL];
+}
+
+- (void)testMediumMapGraph {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    SparseGraph *graph = [SparseGraph newFromFile:[bundle pathForResource:@"mediumMapGraph" ofType:@"data"]];
+    HeuristicManhattan *heuristic = [[HeuristicManhattan alloc] init];
+
+    GraphSearchAStar *aStar = [[GraphSearchAStar alloc] initWithGraph:graph 
+                                                      sourceNodeIndex:0 
+                                                      targetNodeIndex:870 
+                                                            heuristic:heuristic];
+    NSArray *path = [aStar getPathToTarget];
+    STAssertNotNil(path, nil);    
+    [heuristic release];
+    [graph release];
+}
 
 @end

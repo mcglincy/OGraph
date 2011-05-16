@@ -26,4 +26,18 @@
     return self;
 }
 
+# pragma mark NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        index = (NSUInteger)[coder decodeIntegerForKey:@"GNIndex"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeInteger:(NSInteger)index forKey:@"GNIndex"];
+}
+
 @end

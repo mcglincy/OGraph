@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface GraphNode : NSObject {
+@interface GraphNode : NSObject <NSCoding> {
     NSUInteger index;
 }
 

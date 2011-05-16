@@ -23,7 +23,7 @@
     // costToThisNode idx 5 will hold the total cost of all the edges
     // that comprise the best path to node 5 found so far in the
     // search (if node 5 is present and has been visited)
-    NSMutableArray *costToThisNode;
+    double *costToThisNode;
     
     // this is an indexed (by node) list of "parent" edges leading
     // to nodes connected to the SPT but that have not been added

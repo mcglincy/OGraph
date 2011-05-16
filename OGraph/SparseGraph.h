@@ -10,7 +10,7 @@
 @class GraphEdge;
 @class GraphNode;
 
-@interface SparseGraph : NSObject {
+@interface SparseGraph : NSObject <NSCoding> {
     // the nodes that comprise this graph
     NSMutableArray *nodes;
     
@@ -65,5 +65,9 @@
 - (void)clear;
 - (NSArray *)getEdgesForNodeWithIndex:(NSUInteger)index;
 - (void)print;
+
+
+- (void)archiveToFile:(NSString*)path;
++ (SparseGraph *)newFromFile:(NSString*)path;
 
 @end

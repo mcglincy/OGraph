@@ -38,6 +38,10 @@
 		0B6753341374826000C4BEC8 /* NavGraphNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B67531D1374826000C4BEC8 /* NavGraphNode.m */; };
 		0B6753351374826000C4BEC8 /* SparseGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B67531E1374826000C4BEC8 /* SparseGraph.h */; };
 		0B6753361374826000C4BEC8 /* SparseGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B67531F1374826000C4BEC8 /* SparseGraph.m */; };
+		0BBF32101380683500DFF2FA /* HeuristicManhattan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BBF320E1380683500DFF2FA /* HeuristicManhattan.h */; };
+		0BBF32111380683500DFF2FA /* HeuristicManhattan.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BBF320F1380683500DFF2FA /* HeuristicManhattan.m */; };
+		0BBF32121380683500DFF2FA /* HeuristicManhattan.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BBF320F1380683500DFF2FA /* HeuristicManhattan.m */; };
+		0BBF324E13809C7B00DFF2FA /* mediumMapGraph.data in Resources */ = {isa = PBXBuildFile; fileRef = 0BBF324D13809C7B00DFF2FA /* mediumMapGraph.data */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +89,9 @@
 		0B67531D1374826000C4BEC8 /* NavGraphNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavGraphNode.m; sourceTree = "<group>"; };
 		0B67531E1374826000C4BEC8 /* SparseGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparseGraph.h; sourceTree = "<group>"; };
 		0B67531F1374826000C4BEC8 /* SparseGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SparseGraph.m; sourceTree = "<group>"; };
+		0BBF320E1380683500DFF2FA /* HeuristicManhattan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeuristicManhattan.h; sourceTree = "<group>"; };
+		0BBF320F1380683500DFF2FA /* HeuristicManhattan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeuristicManhattan.m; sourceTree = "<group>"; };
+		0BBF324D13809C7B00DFF2FA /* mediumMapGraph.data */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = mediumMapGraph.data; path = testdata/mediumMapGraph.data; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +166,8 @@
 				0B6753171374826000C4BEC8 /* Heuristic.h */,
 				0B6753181374826000C4BEC8 /* HeuristicEuclid.h */,
 				0B6753191374826000C4BEC8 /* HeuristicEuclid.m */,
+				0BBF320E1380683500DFF2FA /* HeuristicManhattan.h */,
+				0BBF320F1380683500DFF2FA /* HeuristicManhattan.m */,
 				0B67531A1374826000C4BEC8 /* IndexedPriorityQLow.h */,
 				0B67531B1374826000C4BEC8 /* IndexedPriorityQLow.m */,
 				0B67531C1374826000C4BEC8 /* NavGraphNode.h */,
@@ -183,6 +192,7 @@
 			children = (
 				0B6752FD137481C100C4BEC8 /* OGraphTests.h */,
 				0B6752FF137481C100C4BEC8 /* OGraphTests.m */,
+				0BBF324C13809C4D00DFF2FA /* testdata */,
 				0B6752F7137481C100C4BEC8 /* Supporting Files */,
 			);
 			path = OGraphTests;
@@ -196,6 +206,14 @@
 				0B6752FC137481C100C4BEC8 /* OGraphTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0BBF324C13809C4D00DFF2FA /* testdata */ = {
+			isa = PBXGroup;
+			children = (
+				0BBF324D13809C7B00DFF2FA /* mediumMapGraph.data */,
+			);
+			name = testdata;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,6 +235,7 @@
 				0B6753311374826000C4BEC8 /* IndexedPriorityQLow.h in Headers */,
 				0B6753331374826000C4BEC8 /* NavGraphNode.h in Headers */,
 				0B6753351374826000C4BEC8 /* SparseGraph.h in Headers */,
+				0BBF32101380683500DFF2FA /* HeuristicManhattan.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +311,7 @@
 			files = (
 				0B6752FB137481C100C4BEC8 /* InfoPlist.strings in Resources */,
 				0B6752FE137481C100C4BEC8 /* OGraphTests.h in Resources */,
+				0BBF324E13809C7B00DFF2FA /* mediumMapGraph.data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +349,7 @@
 				0B6753321374826000C4BEC8 /* IndexedPriorityQLow.m in Sources */,
 				0B6753341374826000C4BEC8 /* NavGraphNode.m in Sources */,
 				0B6753361374826000C4BEC8 /* SparseGraph.m in Sources */,
+				0BBF32111380683500DFF2FA /* HeuristicManhattan.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,6 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B675300137481C100C4BEC8 /* OGraphTests.m in Sources */,
+				0BBF32121380683500DFF2FA /* HeuristicManhattan.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +496,7 @@
 				0B675305137481C100C4BEC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0B675306137481C100C4BEC8 /* Build configuration list for PBXNativeTarget "OGraphTests" */ = {
 			isa = XCConfigurationList;
@@ -482,6 +505,7 @@
 				0B675308137481C100C4BEC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

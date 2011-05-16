@@ -25,7 +25,7 @@
 @synthesize isDigraph;
 
 - (id)init {
-    return [self initWithIsDigraph:YES];
+    return [self initWithIsDigraph:NO];
 }
 
 - (id)initWithIsDigraph:(BOOL)anIsDigraph {
@@ -321,6 +321,47 @@
         }
         count++;
     }
+}
+
+# pragma mark NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        isDigraph = [coder decodeBoolForKey:@"SGIsDigraph"];
+        nextNodeIndex = (NSUInteger)[coder decodeIntegerForKey:@"SGNextNodeIndex"];
+        nodes = [[coder decodeObjectForKey:@"SGNodes"] retain];
+        nodeEdges = [[coder decodeObjectForKey:@"SGNodeEdges"] retain];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeBool:isDigraph forKey:@"SGIsDigraph"];
+    [coder encodeInteger:(NSInteger)nextNodeIndex forKey:@"SGNextNodeIndex"];
+    [coder encodeObject:nodes forKey:@"SGNodes"];
+    [coder encodeObject:nodeEdges forKey:@"SGNodeEdges"];
+}
+
+# pragma mark NSCoding convenience methods
+
+- (void)archiveToFile:(NSString *)path {
+    NSMutableData *data = [[NSMutableData alloc] init];    
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    [archiver encodeObject:self forKey:@"SG"];
+    [archiver finishEncoding];
+    [archiver release];
+    [data writeToFile:path atomically:YES];
+    [data release];
+}
+
++ (SparseGraph *)newFromFile:(NSString*) path {
+    NSData *data = [[NSData alloc] initWithContentsOfFile: path];    
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    SparseGraph *graph = [unarchiver decodeObjectForKey:@"SG"];
+    [unarchiver finishDecoding];
+    // TODO: figure out retain vs. autorelease for this
+    return [graph retain];                     
 }
 
 @end

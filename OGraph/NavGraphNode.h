@@ -10,12 +10,13 @@
 #import <QuartzCore/QuartzCore.h>
 #import "GraphNode.h"
 
-@interface NavGraphNode : GraphNode {
+@interface NavGraphNode : GraphNode <NSCoding> {
     CGPoint position;
 }
 
 @property (nonatomic) CGPoint position;
 
 - (id)initWithIndex:(NSUInteger)anIndex position:(CGPoint)aPosition;
+- (id)initWithIndex:(NSUInteger)anIndex x:(CGFloat)x y:(CGFloat)y;
 
 @end

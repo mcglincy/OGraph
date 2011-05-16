@@ -13,7 +13,7 @@
 #import "IndexedPriorityQLow.h"
 #import "SparseGraph.h"
 
-static NSNumber *kZero;
+static NSNull *kNull;
 
 @interface GraphSearchAStar() 
 - (void)search;
@@ -27,7 +27,7 @@ static NSNumber *kZero;
 + (void)initialize {
     static bool initialized = FALSE;
     if (!initialized) {
-        kZero = [[NSNumber alloc] initWithUnsignedInteger:0U];
+        kNull = [NSNull null];
     }
 }
 
@@ -41,16 +41,13 @@ static NSNumber *kZero;
         sourceNodeIndex = aSourceNodeIndex;
         targetNodeIndex = aTargetNodeIndex;
         heuristic = aHeuristic;
-        // TODO: use arrays?
-        gCosts = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
-        fCosts = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
+        gCosts = (double *)calloc(graph.numNodes, sizeof(double));
+        fCosts = (double *)calloc(graph.numNodes, sizeof(double));
         shortestPathTree = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
         searchFrontier = [[NSMutableArray alloc] initWithCapacity:graph.numNodes];
         for (int i = 0; i < graph.numNodes; i++) {
-            [gCosts addObject:kZero];
-            [fCosts addObject:kZero];
-            [shortestPathTree addObject:kZero];
-            [searchFrontier addObject:kZero];
+            [shortestPathTree addObject:kNull];
+            [searchFrontier addObject:kNull];
         }
         // do the search
         [self search];
@@ -59,6 +56,10 @@ static NSNumber *kZero;
 }
 
 - (void)dealloc {
+    free(gCosts);
+    free(fCosts);
+    [shortestPathTree release];
+    [searchFrontier release];
     [super dealloc];
 }
 
@@ -95,24 +96,24 @@ static NSNumber *kZero;
             double hCost = [heuristic calculateWithNodeA:nodeA b:nodeB];
             
             // calculate the "real" cost to this node from the source (G)
-            double currentCost = [[gCosts objectAtIndex:nextClosestNodeIndex] doubleValue];
+            double currentCost = gCosts[nextClosestNodeIndex];
             double gCost = currentCost + edge.cost;
 
             // if the node has not been added to the frontier,
             // add it and update the G and F costs            
-            if ([searchFrontier objectAtIndex:edge.to] == kZero) {
-                [gCosts replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:gCost]];
-                [fCosts replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:(gCost + hCost)]];
+            if ([searchFrontier objectAtIndex:edge.to] == kNull) {
+                gCosts[edge.to] = gCost;
+                fCosts[edge.to] = gCost + hCost;
                 [pq insert:edge.to];
                 [searchFrontier replaceObjectAtIndex:edge.to withObject:edge];
             } 
             // if this node is already on the frontier but the cost to get here this 
             // way is cheaper than has been found previously, update the node costs
             // and frontier accordingly
-            else if (gCost < [[gCosts objectAtIndex:edge.to] doubleValue] &&
-                     [shortestPathTree objectAtIndex:edge.to] == kZero) {
-                [gCosts replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:gCost]];
-                [fCosts replaceObjectAtIndex:edge.to withObject:[NSNumber numberWithDouble:(gCost + hCost)]];
+            else if (gCost < gCosts[edge.to] &&
+                     [shortestPathTree objectAtIndex:edge.to] == kNull) {
+                gCosts[edge.to] = gCost;
+                fCosts[edge.to] = gCost + hCost;
                 
                 // because the cost is less than it was previously, the PQ must
                 // be resorted to account for this.
@@ -140,7 +141,7 @@ static NSNumber *kZero;
     [path insertObject:[NSNumber numberWithUnsignedInt:nd] atIndex:0];
     
     while (nd != sourceNodeIndex && 
-           [shortestPathTree objectAtIndex:nd] != kZero) {
+           [shortestPathTree objectAtIndex:nd] != kNull) {
         GraphEdge *edge = [shortestPathTree objectAtIndex:nd];
         nd = edge.from;
         [path insertObject:[NSNumber numberWithUnsignedInt:nd] atIndex:0];
@@ -150,7 +151,7 @@ static NSNumber *kZero;
 }
 
 - (double)getCostToNodeIndex:(NSUInteger)idx {
-    return [[gCosts objectAtIndex:idx] doubleValue];    
+    return gCosts[idx];    
 }
 
 - (double)getCostToTarget {
