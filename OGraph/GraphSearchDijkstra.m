@@ -52,9 +52,9 @@ static NSNull *kNull;
 }
 
 - (void)dealloc {
-    [shortestPathTree release];
+    [graph release];
     [searchFrontier release];
-    
+    [shortestPathTree release];
     free(costToThisNode);
     [super dealloc];
 }
