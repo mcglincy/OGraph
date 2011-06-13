@@ -124,6 +124,8 @@ static NSNull *kNull;
             }
         }
     }
+    
+    [pq release];
 }
 
 - (NSArray *)getSPT {
@@ -148,7 +150,7 @@ static NSNull *kNull;
         [path insertObject:[NSNumber numberWithUnsignedInt:nd] atIndex:0];
     }
     
-    return path;
+    return [path autorelease];
 }
 
 - (double)getCostToNodeIndex:(NSUInteger)idx {

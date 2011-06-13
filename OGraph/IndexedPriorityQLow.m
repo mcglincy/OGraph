@@ -47,6 +47,7 @@
 // and then the heap is reordered from the bottom up.
 - (void)insert:(NSUInteger)idx {
     NSAssert(size + 1 <= maxSize, @"IndexedPriorityQLow insert: illegal size");
+    NSAssert(idx < maxSize + 1, @"IndexedPriorityQLow insert: illegal idx");
     ++size;
     heap[size] = idx;
     invHeap[idx] = size;
