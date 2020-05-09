@@ -4,7 +4,7 @@ OGraph, an Objective-C graph library for iOS
 Where it comes from
 -------------------
 This is basically an Objective-C port of Mat Buckland's C++ graph classes, as
-described in his excellent book *Programming Game AI by Example*. More info on Mat Buckland's book and sample C++ files are available at http://www.wordware.com/ai
+described in his excellent book *Programming Game AI by Example*. More info on Mat Buckland's book and sample C++ files are available at https://www.jblearning.com/catalog/productdetails/9781556220784.
 
 OGraph lets you model directed and undirected graphs with nodes and edges, and perform a variety of search algorithms on them, including BFS, DFS, Dijkstra, and A* (AStar).
 
